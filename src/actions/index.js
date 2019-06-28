@@ -4,47 +4,108 @@ import cookies from 'universal-cookie'
 const cookie = new cookies()
 
 export const onRegisterUser = (username, named, nameb, email, pass) => {
-    return async dispatch => {
-        
-        axios.get('http://localhost:2019/users/:user', {
+    return dispatch => {
+        axios.get(`http://localhost:2019/check/:username/:email`, {
             params: {
-                username: username
+                username, email
             }
-        }).then(res => {
-            if (res.data.length === 0) {
+        })
+        .then(res => {
+            console.log(res)
+            
+            if (!res.data.length) {
                 axios.post('http://localhost:2019/reguser', {
-                    username: username,
-                    email: email,
+                    username,
+                    nama_depan: named,
+                    nama_belakang: nameb,
+                    email,
                     password: pass
                 }).then(res => {
+                    console.log(res);
                     dispatch({
-                        type: 'AUTH_SUCCESS',
-                        payload: 'Register Succeeded'
+                        type: 'AUTH_ERROR',
+                        payload: res.data
                     })
-                    setTimeout(() => {
-                        dispatch({
-                             type: 'AUTH_NO_MESS' 
-                            })
-                    }, 3000)
+                }).catch(err => {
+                    console.log(err);
                 })
             } else {
                 dispatch({
                     type: 'AUTH_ERROR',
-                    payload: 'Username/email has been taken'
+                    payload: 'Failed to register'
                 })
-                setTimeout(() => {
-                    dispatch({
-                         type: 'AUTH_NO_MESS' 
-                        })
-                }, 3000)
             }
-        
-        }).catch(err=>{
-            console.log("\nRegister Click - Error: ", err);
-        })
-        
-    }
-}
+        })     
+        // dispatch({
+                //     type: 'LOGIN_SUCCESS',
+                //     payload: { id, username }
+    //             })
+
+    //             cookie.set("masihLogin", username, { path: '/' })
+
+    //         } else {
+    //             dispatch({
+    //                 type: 'AUTH_ERROR',
+    //                 payload: 'Username and Password gak match'
+    //             })
+    //             setTimeout(() => {
+    //                 dispatch({
+    //                     type: 'AUTH_NO_MESS'
+    //                 })
+    //             }, 3000)
+    //         }
+
+    //     }).catch(err => {
+    //         console.log("\nLogin Click - System Error: ", err)
+    //     })
+    // }
+
+    // return async dispatch => {
+        // try{
+        //     const cuser = await axios.get(`http://localhost:2019/users/username/${username}`)
+        //     const cmail = await axios.get(`http://localhost:2019/users/email/${email}`)
+        //     console.log(cuser)
+        //     console.log(cmail)
+        //     if(cuser.data.length === 0 & cmail.data.length === 0){
+        //         await axios.post('/reguser', {
+        //             username,
+        //             nama_depan:named,
+        //             nama_belakang:nameb,
+        //             email,
+        //             password:pass
+        //         }).then(res => {
+        //             dispatch({
+        //                 type:'AUTH_SUCCESS',
+        //                 payload: 'Register Success'
+        //             })
+        //             setTimeout(() => {
+        //                 dispatch({
+        //                     type: 'SET_TIMEOUT'
+        //                 })
+        //             }, 3000)
+        //         })
+        //     } else if(cuser.data.length !== 0 & cmail.data.length === 0){
+        //         return dispatch({
+        //             type: 'AUTH_ERROR',
+        //             payload: 'Username has taken'
+        //         })
+        //     } else if(cuser.data.length === 0 & cmail.data.length !== 0){
+        //         return dispatch({
+        //             type: 'AUTH_ERROR',
+        //             payload: 'Email has taken'
+        //         })
+        //     } else {
+        //         return dispatch ({
+        //             type: 'AUTH_ERROR',
+        //             payload: 'Email and username has been taken'
+        //         })
+        //     }
+        // } catch (err){
+        //     console.log(`it's an error. Now what to do with this ${err}`);
+        // }
+    // }
+}}
+
 
 export const onLoginClick = (user, pass) => {
     
@@ -55,7 +116,7 @@ export const onLoginClick = (user, pass) => {
                 password: pass
             }
         }).then(res => {
-            console.log(res.data);
+            // console.log(res);
             
             if (!res.data) {
                 dispatch({
@@ -68,10 +129,12 @@ export const onLoginClick = (user, pass) => {
                     })
                 }, 3000)
             } else {
-                const { id, username } = res.data[0]
+                console.log(res.data);
+                
+                const { id, username } = res.data
                 
                 dispatch({
-                    type: 'LOGIN_SUCCESS',
+                    type: 'BERHASIL_LOGIN',
                     payload: { id, username }
                 })
 

@@ -10,7 +10,7 @@ const init = {
 }
 
 
-const AuthReducer = (state = init, action) => {
+export default (state = init, action) => {
     switch (action.type) {
         case 'BERHASIL_LOGIN':
             return {
@@ -31,7 +31,7 @@ const AuthReducer = (state = init, action) => {
         case 'ERROR_LOGIN':
             return {...state, error: action.payload}
 
-        case 'NO_MESSAGE':
+        case 'SET_TIMEOUT':
             return {...state, error: '', success: ''}
 
         case 'LOGOUT_USER':
@@ -42,8 +42,3 @@ const AuthReducer = (state = init, action) => {
     }
 }
 
-export default combineReducers(
-    {
-        auth:AuthReducer // berisi data init di atas
-    }
-)
